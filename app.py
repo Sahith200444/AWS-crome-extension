@@ -49,4 +49,4 @@ def get_gemini_response(message):
         return {'error': f'Error communicating with Gemini AI: {e}'}
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
