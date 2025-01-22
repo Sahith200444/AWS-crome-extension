@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
+from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-
+CORS(app)
 # Secret key for session management
 app.secret_key = 'abc3445'  # You can directly declare it here
 
