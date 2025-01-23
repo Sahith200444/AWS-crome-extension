@@ -30,6 +30,18 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
 )
 
+# Predefined mapping of AWS actions to CSS selectors
+AWS_SELECTOR_MAPPING = {
+    "EC2": "#ec2-dashboard-link",
+    "S3": "#s3-dashboard-link",
+    "Create Instance": "#create-instance-button",
+    "Launch Instance": "#launch-instance-btn",
+    "IAM": "#iam-service-link",
+    "CloudWatch": "#cloudwatch-dashboard-link",
+    "RDS": "#rds-dashboard-link",
+    "Billing": "#billing-dashboard-link",
+}
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
@@ -62,7 +74,20 @@ def get_gemini_response(message):
         
         # Send the message and get the response
         response = chat_session.send_message(user_input)
-        return {'response': response.text}
+        response_text = response.text
+
+        # Match keywords in the response to the predefined selector mapping
+        selector = None
+        for keyword, css_selector in AWS_SELECTOR_MAPPING.items():
+            if keyword.lower() in response_text.lower():
+                selector = css_selector
+                break
+
+        # Return both the response text and the matched selector
+        return {
+            'response': response_text,
+            'selector': selector
+        }
     except Exception as e:
         logging.error(f"Error communicating with Gemini AI: {e}")
         raise e
