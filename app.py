@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 import google.generativeai as genai
 from flask_cors import CORS
 import logging
@@ -18,10 +18,10 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 # Model configuration
 generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 64,
-    "max_output_tokens": 8192,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "top_k": 50,
+    "max_output_tokens": 256,
     "response_mime_type": "text/plain",
 }
 
@@ -30,24 +30,13 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
 )
 
-# Predefined mapping of AWS actions to CSS selectors
+# Predefined mapping of the question to CSS selectors
 AWS_SELECTOR_MAPPING = {
-    "EC2": "#ec2-dashboard-link",
-    "S3": "#s3-dashboard-link",
-    "Create Instance": "#create-instance-button",
     "Launch Instance": "#launch-instance-btn",
-    "IAM": "#iam-service-link",
-    "CloudWatch": "#cloudwatch-dashboard-link",
-    "RDS": "#rds-dashboard-link",
-    "Billing": "#billing-dashboard-link",
 }
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
-
-@app.route('/')
-def index():
-    return render_template('chatbot.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -58,7 +47,8 @@ def chat():
 
     # Generate a response using Gemini AI
     try:
-        response = get_gemini_response(user_message)
+        user_input = f"Provide instructions on how to launch an instance in AWS."
+        response = get_gemini_response(user_input)
         return jsonify(response)
     except Exception as e:
         logging.error(f"Error in chat endpoint: {e}")
@@ -66,22 +56,15 @@ def chat():
 
 def get_gemini_response(message):
     try:
-        # Prepare the user input
-        user_input = f"You are an AWS Cloud Navigator in the AWS Console chatbot. Respond to the following message: {message}"
-        
         # Initialize a chat session
         chat_session = model.start_chat(history=[])
-        
+
         # Send the message and get the response
-        response = chat_session.send_message(user_input)
+        response = chat_session.send_message(message)
         response_text = response.text
 
-        # Match keywords in the response to the predefined selector mapping
-        selector = None
-        for keyword, css_selector in AWS_SELECTOR_MAPPING.items():
-            if keyword.lower() in response_text.lower():
-                selector = css_selector
-                break
+        # Map the selector for the keyword "Launch Instance"
+        selector = AWS_SELECTOR_MAPPING.get("Launch Instance", None)
 
         # Return both the response text and the matched selector
         return {
