@@ -32,8 +32,9 @@ model = genai.GenerativeModel(
 
 # Predefined mapping of the question to CSS selectors
 AWS_SELECTOR_MAPPING = {
-    "Launch Instance": "#launch-instance-btn",
+    "Launch Instance": "a.awsui_trigger-button_sne0l_dwtkx_213"
 }
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
