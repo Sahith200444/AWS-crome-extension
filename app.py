@@ -6,8 +6,6 @@ import logging
 app = Flask(__name__)
 CORS(app, resources={r"/chat": {"origins": "*"}})
 
-app.secret_key = 'abc3445'
-
 # Gemini API Key
 GEMINI_API_KEY = 'AIzaSyCuRIopGxIzAVTG-j-Ag2A4VwXHhSOKURY'
 genai.configure(api_key=GEMINI_API_KEY)
@@ -25,11 +23,6 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
 )
 
-# Predefined AWS Selector Mapping
-AWS_SELECTOR_MAPPING = {
-    "Launch Instance": 'a[href="#LaunchInstances:"] span.awsui_label_1f1d4_ocied_5'
-}
-
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get('message')
@@ -37,8 +30,7 @@ def chat():
         return jsonify({'error': 'No message provided'}), 400
 
     try:
-        user_input = "Provide instructions on how to launch an instance in AWS."
-        response = get_gemini_response(user_input)
+        response = get_gemini_response(user_message)
         return jsonify(response)
     except Exception as e:
         logging.error(f"Error in chat endpoint: {e}")
@@ -50,13 +42,8 @@ def get_gemini_response(message):
         response = chat_session.send_message(message)
         response_text = response.text
 
-        # Selector Mapping
-        selector = AWS_SELECTOR_MAPPING.get("Launch Instance", None)
-
-        return {
-            'response': response_text,
-            'selector': selector
-        }
+        # You can optionally include selectors here, but will handle this in the extension
+        return {'response': response_text}
     except Exception as e:
         logging.error(f"Error communicating with Gemini AI: {e}")
         raise e
