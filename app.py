@@ -23,6 +23,13 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
 )
 
+# Pre-prompt for the AI
+PRE_PROMPT = (
+    "You are an AWS chatbot assistant. Your task is to guide users by providing "
+    "only the main points and step-by-step solutions to their AWS-related queries. "
+    "Keep your responses concise and in bullet points. Avoid long explanations."
+)
+
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get('message')
@@ -39,10 +46,14 @@ def chat():
 def get_gemini_response(message):
     try:
         chat_session = model.start_chat(history=[])
-        response = chat_session.send_message(message)
+        full_message = f"{PRE_PROMPT}\n\nUser Query: {message}\n\nResponse:"
+        response = chat_session.send_message(full_message)
         response_text = response.text
 
-        # You can optionally include selectors here, but will handle this in the extension
+        # Ensure response follows bullet point format
+        if not response_text.startswith("•"):
+            response_text = "• " + response_text.replace("\n", "\n• ")
+
         return {'response': response_text}
     except Exception as e:
         logging.error(f"Error communicating with Gemini AI: {e}")
