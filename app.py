@@ -27,26 +27,32 @@ model = genai.GenerativeModel(
 PRE_PROMPT = (
     "You are an AWS chatbot assistant. Your task is to guide users by providing "
     "only the main points and step-by-step solutions to their AWS-related queries. "
-    "Keep your responses concise and in bullet points. Avoid long explanations."
+    "Keep your responses concise and in bullet points."
 )
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_message = request.json.get('message')
+    data = request.json
+    user_message = data.get('message')
+    page_context = data.get('page_context')  # e.g., current URL or page identifier
+
     if not user_message:
         return jsonify({'error': 'No message provided'}), 400
 
     try:
-        response = get_gemini_response(user_message)
+        response = get_gemini_response(user_message, page_context)
         return jsonify(response)
     except Exception as e:
         logging.error(f"Error in chat endpoint: {e}")
         return jsonify({'error': f'Error communicating with Gemini AI: {e}'}), 500
 
-def get_gemini_response(message):
+def get_gemini_response(message, page_context):
     try:
         chat_session = model.start_chat(history=[])
-        full_message = f"{PRE_PROMPT}\n\nUser Query: {message}\n\nResponse:"
+        # Incorporate the page context into the prompt if provided
+        context_info = f"\nContext: The user is currently on the following AWS page: {page_context}" if page_context else ""
+        full_message = f"{PRE_PROMPT}{context_info}\n\nUser Query: {message}\n\nResponse:"
+        
         response = chat_session.send_message(full_message)
         response_text = response.text
 
