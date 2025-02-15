@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "AWS Cloud Navigator",
+  "version": "1.0",
+  "permissions": ["tabs", "activeTab", "scripting"],
+  "host_permissions": ["*://*.aws.amazon.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.aws.amazon.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [{
+    "resources": ["icon.png"],
+    "matches": ["<all_urls>"]
+  }]
+}
