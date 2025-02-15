@@ -33,28 +33,6 @@ This project is **in progress**—the core functionality is more than halfway co
 - `google-generativeai` package
 - Other dependencies listed in `requirements.txt`
 
-### Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/yourusername/aws-chatbot-navigator.git
-   cd aws-chatbot-navigator
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the Flask application:**
-
-   ```bash
-   python app.py
-   ```
-
-   The backend will run locally, and you can test the API endpoints before integrating with the Chrome extension.
 
 ## How It Works
 
