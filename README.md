@@ -1,6 +1,4 @@
-Below is a sample README for your project:
 
----
 
 # AWS Chatbot Navigator Chrome Extension
 
