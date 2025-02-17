@@ -29,7 +29,7 @@ PRE_PROMPT = (
     "only the main points and step-by-step solutions to their AWS-related queries. "
     "Keep your responses concise and in bullet points."
 )
-
+@app.route('/')
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
