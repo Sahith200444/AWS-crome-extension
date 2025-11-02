@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 import google.generativeai as genai
 from flask_cors import CORS
@@ -66,5 +67,6 @@ def get_gemini_response(message, page_context):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
