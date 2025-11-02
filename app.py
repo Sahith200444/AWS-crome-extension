@@ -6,9 +6,8 @@ import logging
 app = Flask(__name__)
 CORS(app, resources={r"/chat": {"origins": "*"}})
 
-# Gemini API Key
-GEMINI_API_KEY = 'AIzaSyC2vzs3HagYyGpQnktab8330BNkK109ZqU'
-genai.configure(api_key=GEMINI_API_KEY)
+
+genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
 generation_config = {
     "temperature": 0.7,
@@ -67,4 +66,5 @@ def get_gemini_response(message, page_context):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
