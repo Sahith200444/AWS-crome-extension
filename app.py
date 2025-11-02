@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/chat": {"origins": "*"}})
 
 # Gemini API Key
-GEMINI_API_KEY = 'AIzaSyCuRIopGxIzAVTG-j-Ag2A4VwXHhSOKURY'
+GEMINI_API_KEY = 'AIzaSyC2vzs3HagYyGpQnktab8330BNkK109ZqU'
 genai.configure(api_key=GEMINI_API_KEY)
 
 generation_config = {
@@ -19,7 +19,7 @@ generation_config = {
 }
 
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
+    model_name="gemini-2.5-flash",
     generation_config=generation_config,
 )
 
@@ -67,3 +67,4 @@ def get_gemini_response(message, page_context):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
